@@ -1,0 +1,20 @@
+# Fichiers de configuration
+api/config.php
+config/database.php
+
+# Fichiers CSS
+css/styles.css.map
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Logs et temporaires
+*.log
+*.tmp
+temp/
+cache/
+
+# Fichiers de sauvegarde
+*.bak
+*~
