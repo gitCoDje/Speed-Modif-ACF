@@ -46,3 +46,73 @@ img {
     outline: 2px solid var(--secondary);
     outline-offset: 2px;
 }
+
+// Personnalisation de la card Bootstrap
+.card {
+    border-radius: 1rem !important;
+    overflow: hidden;
+    
+    .card-header {
+        background: linear-gradient(135deg, var(--secondary), var(--primary)) !important;
+        border: none;
+    }
+    
+    .card-title {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+}
+// Personnalisation des inputs Bootstrap
+.form-control {
+    border-radius: 0.5rem;
+    border: 2px solid var(--border-light);
+    padding: 0.875rem 1rem;
+    font-family: 'Inter', sans-serif;
+    
+
+    &:focus {
+        border-color: var(--secondary);
+        box-shadow: 0 0 0 0.2rem rgba(25, 118, 210, 0.25);
+    }
+
+    &.is-invalid {
+        border-color: #dc3545;
+    }
+
+    &.is-valid {
+        border-color: #198754;
+    }
+}
+
+.form-label {
+    color: var(--text-primary);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    
+    i {
+        color: var(--secondary);
+    }
+}
+
+// Bouton personnalisé Bootstrap
+.btn-primary {
+    background: var(--action);
+    border-color: var(--action);
+    font-weight: 600;
+    padding: 0.875rem 1.5rem;
+    border-radius: 0.5rem;   
+
+    &:hover {
+        background: var(--secondary);
+        border-color: var(--secondary);        
+    }
+
+    &:focus {
+        box-shadow: 0 0 0 0.2rem rgba(33, 150, 243, 0.5);
+    }
+
+    &:disabled {
+        background: var(--border-light);
+        border-color: var(--border-light);        
+    }
+}

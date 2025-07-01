@@ -4,336 +4,146 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Speed Modif ACF</title>
+    <title>DashBoard - Speed Modif ACF</title>
+
+    <!-- Bootstrap css -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr"
+      crossorigin="anonymous" />
+
+    <!-- Bootstap icon -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
+
+    <!-- Google fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet" />    
-    <link rel="stylesheet" href="css/dashboard.css" type="text/css" />
+      rel="stylesheet" />
+    <link rel="stylesheet" href="./css/styles.css" type="text/css" />
 
     <meta name="author" content="coDje" />
     <meta
       name="description"
-      content="Fast. Simple. Secure. Une application qui modifie rapidement les champs ACF existants." />    
+      content="Fast. Simple. Secure. Une application qui modifie rapidement les champs ACF existants." />
   </head>
-  <body>
-    <!-- Header Navigation -->
-    <header class="header">
-      <div class="header-container">
-        <div class="logo-section">
-          <div class="logo-text">
-            <div class="logo-s">S</div>
-            <span class="logo-speed">SPEED</span>
-            <span class="logo-modif">MODIF</span>
-            <span class="logo-acf">ACF</span>
-          </div>
-        </div>
+ <body class="dashboard-page">
 
-        <nav class="nav-menu">
-          <a href="#" class="nav-link active">
-            <span class="nav-icon">🏠</span>
-            Dashboard
-          </a>
-          <a href="#" class="nav-link">
-            <span class="nav-icon">📝</span>
-            Champs ACF
-          </a>
-          <a href="#" class="nav-link">
-            <span class="nav-icon">📊</span>
-            Historique
-          </a>
-        </nav>
-
-        <div class="user-section">
-          <div class="user-info">
-            <span class="user-name">John Doe</span>
-            <span class="user-role">Éditeur</span>
-          </div>
-          <button class="logout-btn" id="logoutBtn">
-            <span class="logout-icon">🚪</span>
-            Déconnexion
-          </button>
-        </div>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+  <div class="container-fluid">
+    <!-- Logo -->
+    <a class="navbar-brand d-flex align-items-center" href="#">
+      <div class="logo-s me-2">S</div>
+      <span class="logo-speed">SPEED</span>
+      <span class="logo-modif mx-1">MODIF</span>
+      <span class="logo-acf">ACF</span>
+    </a>
+    <!-- Burger for mobile -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-controls="sidebarOffcanvas">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <!-- Recherche globale (desktop only) -->
+    <div class="mx-auto d-none d-lg-block" style="max-width: 400px;">
+      <div class="input-group">
+        <span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span>
+        <input type="text" class="form-control" id="globalSearch" placeholder="Rechercher un champ ou une section...">
       </div>
-    </header>
+    </div>
+    <!-- User section -->
+    <div class="d-flex align-items-center">
+      <span class="text-white me-3" id="userName">John Doe</span>
+      <button class="btn btn-outline-light btn-sm" id="logoutBtn">
+        <i class="bi bi-box-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid">
+  <div class="row">
+    <!-- Sidebar desktop -->
+    <div class="col-lg-2 bg-white border-end sidebar d-none d-lg-block">
+      <div class="py-3">
+        <h6 class="text-muted text-uppercase small fw-bold px-3 mb-3">Sections ACF</h6>
+        <nav class="nav flex-column">
+          <a class="nav-link section-link active" data-section="identite" href="#identite"><i class="bi bi-palette me-2"></i>Identité Visuelle <span class="badge bg-secondary ms-auto">4</span></a>
+          <a class="nav-link section-link" data-section="header" href="#header"><i class="bi bi-layout-text-window me-2"></i>Header <span class="badge bg-secondary ms-auto">5</span></a>
+          <a class="nav-link section-link" data-section="presentation" href="#presentation"><i class="bi bi-person-badge me-2"></i>Présentation <span class="badge bg-secondary ms-auto">5</span></a>
+          <a class="nav-link section-link" data-section="partenaires" href="#partenaires"><i class="bi bi-people me-2"></i>Partenaires <span class="badge bg-secondary ms-auto">7</span></a>
+          <a class="nav-link section-link" data-section="services" href="#services"><i class="bi bi-gear me-2"></i>Services <span class="badge bg-secondary ms-auto">14</span></a>
+          <a class="nav-link section-link" data-section="carrousel" href="#carrousel"><i class="bi bi-images me-2"></i>Carrousel <span class="badge bg-secondary ms-auto">17</span></a>
+          <a class="nav-link section-link" data-section="contact" href="#contact"><i class="bi bi-envelope me-2"></i>Contact <span class="badge bg-secondary ms-auto">2</span></a>
+        </nav>
+        <hr class="my-3">
+        <h6 class="text-muted text-uppercase small fw-bold px-3 mb-3">Historique</h6>
+        <nav class="nav flex-column">
+          <a class="nav-link section-link" data-section="historique" href="#historique"><i class="bi bi-clock-history me-2"></i>Modifications récentes</a>
+        </nav>
+      </div>
+    </div>
 
     <!-- Main Content -->
-    <main class="main-content">
-      <div class="dashboard-container">
-        <!-- Welcome Section -->
-        <section class="welcome-section">
-          <div class="welcome-content">
-            <h1 class="welcome-title">Bienvenue sur Speed Modif ACF</h1>
-            <p class="welcome-subtitle">
-              Modifiez facilement vos contenus WordPress
-            </p>
+    <div class="col-lg-10">
+      <main class="py-4">
+        <!-- Section Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h2 id="sectionTitle">Identité Visuelle</h2>
+            <p class="text-muted mb-0" id="sectionDescription">Gérez les éléments d'identité visuelle de votre site</p>
           </div>
-          <div class="stats-grid">
-            <div class="stat-card">
-              <div class="stat-icon">📝</div>
-              <div class="stat-content">
-                <div class="stat-number">12</div>
-                <div class="stat-label">Champs disponibles</div>
-              </div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-icon">✅</div>
-              <div class="stat-content">
-                <div class="stat-number">8</div>
-                <div class="stat-label">Modifications aujourd'hui</div>
-              </div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-icon">⏱️</div>
-              <div class="stat-content">
-                <div class="stat-number">2.3s</div>
-                <div class="stat-label">Temps de sauvegarde</div>
-              </div>
-            </div>
-          </div>
-        </section>
+          <button class="btn btn-outline-primary" id="refreshSection">
+            <i class="bi bi-arrow-clockwise me-1"></i>
+            Actualiser
+          </button>
+        </div>
+        <!-- Content Container -->
+        <div id="contentContainer"></div>
+      </main>
+    </div>
+  </div>
+</div>
 
-        <!-- ACF Fields Section -->
-        <section class="fields-section">
-          <div class="section-header">
-            <h2 class="section-title">Champs ACF Modifiables</h2>
-            <div class="section-actions">
-              <button class="refresh-btn" id="refreshFields">
-                <span class="refresh-icon">🔄</span>
-                Actualiser
-              </button>
-              <div class="search-box">
-                <input
-                  type="text"
-                  id="searchFields"
-                  placeholder="Rechercher un champ..."
-                  class="search-input" />
-                <span class="search-icon">🔍</span>
-              </div>
-            </div>
-          </div>
+<!-- Sidebar offcanvas for mobile -->
+<div class="offcanvas offcanvas-start" tabindex="-1" id="sidebarOffcanvas">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title">Menu</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fermer"></button>
+  </div>
+  <div class="offcanvas-body p-0">
+    <nav class="nav flex-column py-3">
+      <a class="nav-link section-link active" data-section="identite" href="#identite" data-bs-dismiss="offcanvas"><i class="bi bi-palette me-2"></i>Identité Visuelle</a>
+      <a class="nav-link section-link" data-section="header" href="#header" data-bs-dismiss="offcanvas"><i class="bi bi-layout-text-window me-2"></i>Header</a>
+      <a class="nav-link section-link" data-section="presentation" href="#presentation" data-bs-dismiss="offcanvas"><i class="bi bi-person-badge me-2"></i>Présentation</a>
+      <a class="nav-link section-link" data-section="partenaires" href="#partenaires" data-bs-dismiss="offcanvas"><i class="bi bi-people me-2"></i>Partenaires</a>
+      <a class="nav-link section-link" data-section="services" href="#services" data-bs-dismiss="offcanvas"><i class="bi bi-gear me-2"></i>Services</a>
+      <a class="nav-link section-link" data-section="carrousel" href="#carrousel" data-bs-dismiss="offcanvas"><i class="bi bi-images me-2"></i>Carrousel</a>
+      <a class="nav-link section-link" data-section="contact" href="#contact" data-bs-dismiss="offcanvas"><i class="bi bi-envelope me-2"></i>Contact</a>
+      <hr>
+      <a class="nav-link section-link" data-section="historique" href="#historique" data-bs-dismiss="offcanvas"><i class="bi bi-clock-history me-2"></i>Historique</a>
+    </nav>
+  </div>
+</div>
 
-          <div class="fields-grid" id="fieldsGrid">
-            <!-- Field Card 1 -->
-            <div class="field-card" data-field-type="text">
-              <div class="field-header">
-                <div class="field-icon text-field">📝</div>
-                <div class="field-info">
-                  <h3 class="field-title">Titre Principal</h3>
-                  <p class="field-description">
-                    Titre affiché en en-tête de page
-                  </p>
-                </div>
-                <div class="field-status active">Actif</div>
-              </div>
-              <div class="field-preview">
-                <span class="preview-label">Contenu actuel :</span>
-                <span class="preview-text"
-                  >"Bienvenue chez Speed Modif ACF"</span
-                >
-              </div>
-              <div class="field-actions">
-                <button class="edit-btn" data-field-id="title_principal">
-                  <span class="edit-icon">✏️</span>
-                  Modifier
-                </button>
-                <button class="preview-btn" data-field-id="title_principal">
-                  <span class="preview-icon">👁️</span>
-                  Prévisualiser
-                </button>
-              </div>
-            </div>
+<!-- Footer -->
+<footer class="text-center py-3 mt-4">
+  <small class="text-muted">
+    <i class="bi bi-c-circle me-1"></i>
+    Speed Modif ACF © 2025
+  </small>
+</footer>
 
-            <!-- Field Card 2 -->
-            <div class="field-card" data-field-type="textarea">
-              <div class="field-header">
-                <div class="field-icon textarea-field">📄</div>
-                <div class="field-info">
-                  <h3 class="field-title">Description Entreprise</h3>
-                  <p class="field-description">
-                    Texte de présentation de l'entreprise
-                  </p>
-                </div>
-                <div class="field-status active">Actif</div>
-              </div>
-              <div class="field-preview">
-                <span class="preview-label">Contenu actuel :</span>
-                <span class="preview-text"
-                  >"Notre entreprise accompagne les clients..."</span
-                >
-              </div>
-              <div class="field-actions">
-                <button class="edit-btn" data-field-id="description_entreprise">
-                  <span class="edit-icon">✏️</span>
-                  Modifier
-                </button>
-                <button
-                  class="preview-btn"
-                  data-field-id="description_entreprise">
-                  <span class="preview-icon">👁️</span>
-                  Prévisualiser
-                </button>
-              </div>
-            </div>
+    <!-- Bootstrap JS -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+      crossorigin="anonymous"></script>
 
-            <!-- Field Card 3 -->
-            <div class="field-card" data-field-type="image">
-              <div class="field-header">
-                <div class="field-icon image-field">🖼️</div>
-                <div class="field-info">
-                  <h3 class="field-title">Image Mise en Avant</h3>
-                  <p class="field-description">
-                    Image principale de la page d'accueil
-                  </p>
-                </div>
-                <div class="field-status active">Actif</div>
-              </div>
-              <div class="field-preview image-preview">
-                <img
-                  src="https://via.placeholder.com/300x150/42a5f5/ffffff?text=Image+Actuelle"
-                  alt="Aperçu image"
-                  class="preview-image" />
-              </div>
-              <div class="field-actions">
-                <button class="edit-btn" data-field-id="image_mise_en_avant">
-                  <span class="edit-icon">✏️</span>
-                  Modifier
-                </button>
-                <button class="preview-btn" data-field-id="image_mise_en_avant">
-                  <span class="preview-icon">👁️</span>
-                  Prévisualiser
-                </button>
-              </div>
-            </div>
-
-            <!-- Field Card 4 -->
-            <div class="field-card" data-field-type="text">
-              <div class="field-header">
-                <div class="field-icon text-field">📞</div>
-                <div class="field-info">
-                  <h3 class="field-title">Numéro de Téléphone</h3>
-                  <p class="field-description">Contact téléphonique affiché</p>
-                </div>
-                <div class="field-status active">Actif</div>
-              </div>
-              <div class="field-preview">
-                <span class="preview-label">Contenu actuel :</span>
-                <span class="preview-text">"+33 1 23 45 67 89"</span>
-              </div>
-              <div class="field-actions">
-                <button class="edit-btn" data-field-id="numero_telephone">
-                  <span class="edit-icon">✏️</span>
-                  Modifier
-                </button>
-                <button class="preview-btn" data-field-id="numero_telephone">
-                  <span class="preview-icon">👁️</span>
-                  Prévisualiser
-                </button>
-              </div>
-            </div>
-
-            <!-- Field Card 5 -->
-            <div class="field-card" data-field-type="textarea">
-              <div class="field-header">
-                <div class="field-icon textarea-field">📍</div>
-                <div class="field-info">
-                  <h3 class="field-title">Adresse Entreprise</h3>
-                  <p class="field-description">
-                    Adresse complète de l'entreprise
-                  </p>
-                </div>
-                <div class="field-status inactive">Inactif</div>
-              </div>
-              <div class="field-preview">
-                <span class="preview-label">Contenu actuel :</span>
-                <span class="preview-text"
-                  >"123 Rue de la Paix, 75001 Paris"</span
-                >
-              </div>
-              <div class="field-actions">
-                <button
-                  class="edit-btn disabled"
-                  data-field-id="adresse_entreprise"
-                  disabled>
-                  <span class="edit-icon">✏️</span>
-                  Modifier
-                </button>
-                <button class="preview-btn" data-field-id="adresse_entreprise">
-                  <span class="preview-icon">👁️</span>
-                  Prévisualiser
-                </button>
-              </div>
-            </div>
-
-            <!-- Field Card 6 -->
-            <div class="field-card" data-field-type="wysiwyg">
-              <div class="field-header">
-                <div class="field-icon wysiwyg-field">📋</div>
-                <div class="field-info">
-                  <h3 class="field-title">Contenu Services</h3>
-                  <p class="field-description">
-                    Description détaillée des services
-                  </p>
-                </div>
-                <div class="field-status active">Actif</div>
-              </div>
-              <div class="field-preview">
-                <span class="preview-label">Contenu actuel :</span>
-                <span class="preview-text"
-                  >"Nos services incluent le développement..."</span
-                >
-              </div>
-              <div class="field-actions">
-                <button class="edit-btn" data-field-id="contenu_services">
-                  <span class="edit-icon">✏️</span>
-                  Modifier
-                </button>
-                <button class="preview-btn" data-field-id="contenu_services">
-                  <span class="preview-icon">👁️</span>
-                  Prévisualiser
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Recent Activity -->
-        <section class="activity-section">
-          <h2 class="section-title">Activité Récente</h2>
-          <div class="activity-list">
-            <div class="activity-item">
-              <div class="activity-icon">✏️</div>
-              <div class="activity-content">
-                <div class="activity-text">
-                  <strong>Titre Principal</strong> modifié
-                </div>
-                <div class="activity-time">Il y a 2 heures</div>
-              </div>
-            </div>
-            <div class="activity-item">
-              <div class="activity-icon">🖼️</div>
-              <div class="activity-content">
-                <div class="activity-text">
-                  <strong>Image Mise en Avant</strong> mise à jour
-                </div>
-                <div class="activity-time">Il y a 5 heures</div>
-              </div>
-            </div>
-            <div class="activity-item">
-              <div class="activity-icon">📄</div>
-              <div class="activity-content">
-                <div class="activity-text">
-                  <strong>Description Entreprise</strong> modifiée
-                </div>
-                <div class="activity-time">Hier à 14:30</div>
-              </div>
-            </div>
-          </div>
-        </section>
-      </div>
-    </main>
-
-    <script src="js/dashboad.js"></script>
+    <!-- Custom JS -->
+    <script src="js/dashboard.js"></script>
   </body>
 </html>

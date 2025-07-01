@@ -1,0 +1,45 @@
+// Logo
+.logo-s {
+    width: 2.5rem;
+    height: 2.5rem;
+    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-middle), var(--gradient-end));
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 1.25rem;
+    box-shadow: 0 4px 12px rgba(13, 73, 127, 0.3);
+}
+
+.logo-speed {
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 1.5rem;
+}
+
+.logo-modif {
+    color: var(--text-primary);
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+
+.logo-acf {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 1.5rem;
+}
+
+// Responsive
+@media (max-width: 768px) {
+    .logo-speed, .logo-modif, .logo-acf {
+        font-size: 1.25rem;
+    }
+    
+    .logo-s {
+        width: 2rem;
+        height: 2rem;
+        font-size: 1rem;
+    }
+}

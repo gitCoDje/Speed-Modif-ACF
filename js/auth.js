@@ -1,112 +1,168 @@
-// Configuration de l'API
-const API_CONFIG = {
-    baseUrl: '/api',
-    endpoints: {
-        login: '/auth.php'
-    }
-};
+// Variables globales
+let loginAttempts = 0;
+const MAX_ATTEMPTS = 3;
 
-// Gestion du formulaire de connexion
+// Initialisation
 document.addEventListener('DOMContentLoaded', function() {
-    const loginForm = document.getElementById('loginForm');
-    const errorMessage = document.getElementById('errorMessage');
-    
-    if (loginForm) {
-        loginForm.addEventListener('submit', handleLogin);
-    }
-    
-    // Animation au focus des inputs
-    const inputs = document.querySelectorAll('.form-input');
-    inputs.forEach(input => {
-        input.addEventListener('focus', function() {
-            this.parentElement.style.transform = 'translateY(-2px)';
-        });
-        
-        input.addEventListener('blur', function() {
-            this.parentElement.style.transform = 'translateY(0)';
-        });
-    });
+    initializeForm();
+    checkExistingAuth();
+    generateCSRFToken();
 });
 
 /**
- * Gestion de la soumission du formulaire de connexion
+ * Initialisation du formulaire
+ */
+function initializeForm() {
+    const form = document.getElementById('loginForm');
+    form.addEventListener('submit', handleLogin);
+    
+    // Validation temps réel
+    const inputs = form.querySelectorAll('input[required]');
+    inputs.forEach(input => {
+        input.addEventListener('blur', validateInput);
+        input.addEventListener('input', clearValidation);
+    });
+}
+
+/**
+ * Gestion de la soumission
  */
 async function handleLogin(e) {
     e.preventDefault();
     
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const errorMessage = document.getElementById('errorMessage');
+    // Vérifier les tentatives
+    if (!checkLoginAttempts()) return;
     
-    // Validation côté client
-    if (!email || !password) {
-        showError('Veuillez remplir tous les champs.');
-        return;
-    }
+    const form = e.target;
+    const formData = new FormData(form);
     
-    if (!isValidEmail(email)) {
-        showError('Veuillez entrer une adresse email valide.');
-        return;
-    }
+    // Validation
+    if (!validateForm(form)) return;
     
     try {
-        // Désactiver le bouton pendant la requête
-        const submitButton = document.querySelector('.login-button');
-        submitButton.disabled = true;
-        submitButton.textContent = 'Connexion...';
+        setLoadingState(true);
         
-        // Appel à l'API d'authentification
-        const response = await fetch(`${API_CONFIG.baseUrl}${API_CONFIG.endpoints.login}`, {
+        const response = await fetch('api/auth.php', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                email: email,
-                password: password
-            })
+            body: formData
         });
         
         const data = await response.json();
         
         if (response.ok && data.success) {
-            // Stocker le token JWT
+            // Succès
             localStorage.setItem('authToken', data.token);
             localStorage.setItem('user', JSON.stringify(data.user));
-            
-            // Redirection vers le dashboard
             window.location.href = 'dashboard.html';
         } else {
-            showError(data.message || 'Identifiants incorrects. Veuillez réessayer.');
+            // Erreur
+            loginAttempts++;
+            showError(data.message || 'Identifiants incorrects');
         }
         
     } catch (error) {
-        console.error('Erreur de connexion:', error);
-        showError('Erreur de connexion. Veuillez réessayer.');
+        console.error('Erreur:', error);
+        showError('Erreur de connexion');
     } finally {
-        // Réactiver le bouton
-        const submitButton = document.querySelector('.login-button');
-        submitButton.disabled = false;
-        submitButton.textContent = 'Se connecter';
+        setLoadingState(false);
     }
 }
 
 /**
- * Afficher un message d'erreur
+ * Validation du formulaire
+ */
+function validateForm(form) {
+    let isValid = true;
+    const inputs = form.querySelectorAll('input[required]');
+    
+    inputs.forEach(input => {
+        if (!validateInput({ target: input })) {
+            isValid = false;
+        }
+    });
+    
+    return isValid;
+}
+
+/**
+ * Validation d'un input
+ */
+function validateInput(e) {
+    const input = e.target;
+    const value = input.value.trim();
+    
+    input.classList.remove('is-valid', 'is-invalid');
+    
+    if (!value) {
+        input.classList.add('is-invalid');
+        return false;
+    }
+    
+    if (input.type === 'email' && !isValidEmail(value)) {
+        input.classList.add('is-invalid');
+        return false;
+    }
+    
+    if (input.type === 'password' && value.length < 8) {
+        input.classList.add('is-invalid');
+        return false;
+    }
+    
+    input.classList.add('is-valid');
+    return true;
+}
+
+/**
+ * Effacer la validation
+ */
+function clearValidation(e) {
+    e.target.classList.remove('is-valid', 'is-invalid');
+}
+
+/**
+ * État de chargement
+ */
+function setLoadingState(loading) {
+    const button = document.getElementById('loginButton');
+    const buttonText = document.getElementById('buttonText');
+    const spinner = document.getElementById('loginSpinner');
+    
+    button.disabled = loading;
+    buttonText.textContent = loading ? 'Connexion...' : 'Se connecter';
+    spinner.classList.toggle('d-none', !loading);
+}
+
+/**
+ * Afficher une erreur
  */
 function showError(message) {
-    const errorMessage = document.getElementById('errorMessage');
-    errorMessage.textContent = message;
-    errorMessage.style.display = 'block';
+    const errorDiv = document.getElementById('errorMessage');
+    const errorText = document.getElementById('errorText');
     
-    // Masquer le message après 5 secondes
+    errorText.textContent = message;
+    errorDiv.classList.remove('d-none');
+    
     setTimeout(() => {
-        errorMessage.style.display = 'none';
+        errorDiv.classList.add('d-none');
     }, 5000);
 }
 
 /**
- * Validation d'email simple
+ * Vérifier les tentatives de connexion
+ */
+function checkLoginAttempts() {
+    if (loginAttempts >= MAX_ATTEMPTS) {
+        showError('Trop de tentatives. Veuillez patienter 5 minutes.');
+        setTimeout(() => {
+            loginAttempts = 0;
+        }, 300000);
+        return false;
+    }
+    return true;
+}
+
+/**
+ * Validation email
  */
 function isValidEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -114,15 +170,20 @@ function isValidEmail(email) {
 }
 
 /**
- * Vérifier si l'utilisateur est déjà connecté
+ * Vérifier authentification existante
  */
-function checkAuthStatus() {
+function checkExistingAuth() {
     const token = localStorage.getItem('authToken');
     if (token) {
-        // Vérifier la validité du token (optionnel)
         window.location.href = 'dashboard.html';
     }
 }
 
-// Vérifier l'état d'authentification au chargement
-checkAuthStatus();
+/**
+ * Générer token CSRF
+ */
+function generateCSRFToken() {
+    const token = Math.random().toString(36).substring(2);
+    document.getElementById('csrfToken').value = token;
+    sessionStorage.setItem('csrf_token', token);
+}

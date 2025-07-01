@@ -1,517 +1,381 @@
-// Configuration de l'API
-const API_CONFIG = {
-    baseUrl: '/api',
-    endpoints: {
-        fields: '/fields.php',
-        logout: '/auth.php'
-    }
-};
+// Variables globales
+let acfData = {};
+let currentSection = 'identite';
+let allFields = [];
 
-// État global de l'application
-let fieldsData = [];
-let filteredFields = [];
-
-// Initialisation de l'application
+// Initialisation
 document.addEventListener('DOMContentLoaded', function() {
-    initializeDashboard();
-    setupEventListeners();
-    loadFields();
-});
-
-/**
- * Initialisation du dashboard
- */
-function initializeDashboard() {
-    // Vérifier l'authentification
     checkAuthentication();
-    
-    // Afficher les informations utilisateur
-    displayUserInfo();
-    
-    // Initialiser les animations
-    initializeAnimations();
-}
-
-/**
- * Configuration des écouteurs d'événements
- */
-function setupEventListeners() {
-    // Bouton de déconnexion
-    const logoutBtn = document.getElementById('logoutBtn');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', handleLogout);
-    }
-    
-    // Bouton d'actualisation
-    const refreshBtn = document.getElementById('refreshFields');
-    if (refreshBtn) {
-        refreshBtn.addEventListener('click', handleRefreshFields);
-    }
-    
-    // Recherche de champs
-    const searchInput = document.getElementById('searchFields');
-    if (searchInput) {
-        searchInput.addEventListener('input', handleFieldSearch);
-    }
-    
-    // Boutons d'édition et de prévisualisation
-    document.addEventListener('click', function(e) {
-        if (e.target.closest('.edit-btn')) {
-            const fieldId = e.target.closest('.edit-btn').dataset.fieldId;
-            handleEditField(fieldId);
-        }
-        
-        if (e.target.closest('.preview-btn')) {
-            const fieldId = e.target.closest('.preview-btn').dataset.fieldId;
-            handlePreviewField(fieldId);
-        }
-    });
-}
+    loadACFData();
+    setupEventListeners();
+    switchSection('identite');
+});
 
 /**
  * Vérification de l'authentification
  */
 function checkAuthentication() {
-    const token = localStorage.getItem('authToken');
-    if (!token) {
-        window.location.href = 'index.html';
-        return;
-    }
-    
-    // Vérifier la validité du token (optionnel)
-    try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        if (payload.exp * 1000 < Date.now()) {
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('user');
-            window.location.href = 'index.html';
-        }
-    } catch (error) {
-        console.error('Token invalide:', error);
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('user');
-        window.location.href = 'index.html';
-    }
+    // const token = localStorage.getItem('authToken');
+    // if (!token) {
+    //     window.location.href = 'index.html';
+    //     return;
+    // }
 }
 
 /**
- * Affichage des informations utilisateur
+ * Configuration des événements
  */
-function displayUserInfo() {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const userNameElement = document.querySelector('.user-name');
-    const userRoleElement = document.querySelector('.user-role');
-    
-    if (userNameElement && user.name) {
-        userNameElement.textContent = user.name;
-    }
-    
-    if (userRoleElement) {
-        userRoleElement.textContent = user.role || 'Éditeur';
-    }
-}
-
-/**
- * Chargement des champs ACF
- */
-async function loadFields() {
-    try {
-        showLoadingState();
-        
-        const token = localStorage.getItem('authToken');
-        const response = await fetch(`${API_CONFIG.baseUrl}${API_CONFIG.endpoints.fields}`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
+function setupEventListeners() {
+    // Navigation sections
+    document.querySelectorAll('.section-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const section = e.target.closest('.section-link').dataset.section;
+            switchSection(section);
         });
-        
-        if (!response.ok) {
-            throw new Error('Erreur lors du chargement des champs');
+    });
+
+    // Recherche globale
+    document.getElementById('globalSearch').addEventListener('input', handleGlobalSearch);
+
+    // Actualisation
+    document.getElementById('refreshSection').addEventListener('click', handleRefreshSection);
+
+    // Déconnexion
+    document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+}
+
+/**
+ * Chargement des données ACF
+ */
+function loadACFData() {
+    acfData = {
+        identite: [
+            { id: 'logo', title: 'Logo', group: 'identite_visuelle_group', preview: 'logo-entreprise.png', lastModified: '2025-01-02 14:30' },
+            { id: 'mobile_titre', title: 'Titre Bouton Mobile', group: 'bouton_fixe_mobile', preview: 'Appelez-nous', lastModified: '2025-01-01 09:15' },
+            { id: 'mobile_number', title: 'Numéro Bouton Mobile', group: 'bouton_fixe_mobile', preview: '+33 1 23 45 67 89', lastModified: '2025-01-01 09:15' },
+            { id: 'deco_elements', title: 'Éléments Décoratifs', group: 'deco_group', preview: '3 éléments configurés', lastModified: '2024-12-28 16:45' }
+        ],
+        header: [
+            { id: 'header_titre', title: 'Titre Header', group: 'header_group', preview: 'Bienvenue chez notre entreprise', lastModified: '2025-01-02 10:20' },
+            { id: 'header_description', title: 'Description Header', group: 'header_group', preview: 'Nous sommes spécialisés dans...', lastModified: '2025-01-02 10:25' },
+            { id: 'image_arriere_plan', title: 'Image Arrière-plan', group: 'header_group', preview: 'header-bg.jpg', lastModified: '2024-12-30 14:15' },
+            { id: 'texte_bouton', title: 'Texte Bouton Contact', group: 'bouton_contact', preview: 'Nous contacter', lastModified: '2024-12-28 11:30' },
+            { id: 'lien_bouton', title: 'Lien Bouton Contact', group: 'bouton_contact', preview: '#contact', lastModified: '2024-12-28 11:30' }
+        ],
+        presentation: [
+            { id: 'presentation_titre', title: 'Titre Présentation', group: 'presentation_group', preview: 'Notre expertise', lastModified: '2025-01-01 16:20' },
+            { id: 'presentation_paragraphe', title: 'Texte Présentation', group: 'presentation_group', preview: 'Forte de plusieurs années...', lastModified: '2025-01-01 16:25' },
+            { id: 'image_cercle', title: 'Image Cercle', group: 'presentation_group', preview: 'presentation-circle.jpg', lastModified: '2024-12-29 15:45' },
+            { id: 'cercle_devis', title: 'Texte Cercle Devis', group: 'presentation_group', preview: 'Devis gratuit', lastModified: '2024-12-29 15:50' },
+            { id: 'cercle_devis2', title: 'Texte Cercle Devis 2', group: 'presentation_group', preview: 'Sous 24h', lastModified: '2024-12-29 15:50' }
+        ],
+        partenaires: [
+            { id: 'titre_partenaires', title: 'Titre Partenaires', group: 'partenaire_group', preview: 'Nos partenaires', lastModified: '2024-12-27 14:10' },
+            { id: 'paragraphe_partenaires_1', title: 'Paragraphe 1', group: 'partenaire_group', preview: 'Nous travaillons avec...', lastModified: '2024-12-27 14:15' },
+            { id: 'logo_partenaires_1', title: 'Logo Partenaire 1', group: 'partenaire_group', preview: 'partner1.png', lastModified: '2024-12-26 10:30' },
+            { id: 'logo_partenaires_2', title: 'Logo Partenaire 2', group: 'partenaire_group', preview: 'partner2.png', lastModified: '2024-12-26 10:30' },
+            { id: 'logo_partenaires_3', title: 'Logo Partenaire 3', group: 'partenaire_group', preview: 'partner3.png', lastModified: '2024-12-26 10:30' },
+            { id: 'logo_partenaires_4', title: 'Logo Partenaire 4', group: 'partenaire_group', preview: 'partner4.png', lastModified: '2024-12-26 10:30' },
+            { id: 'paragraphe_partenaires_2', title: 'Paragraphe 2', group: 'partenaire_group', preview: 'Ces collaborations...', lastModified: '2024-12-27 14:15' }
+        ],
+        services: [
+            { id: 'titre_services', title: 'Titre Services', group: 'service_group', preview: 'Nos services', lastModified: '2025-01-01 11:45' },
+            { id: 'paragraphe_services', title: 'Description Services', group: 'service_group', preview: 'Découvrez notre gamme...', lastModified: '2025-01-01 11:50' },
+            { id: 'service_1_titre', title: 'Service 1 - Titre', group: 'service_1', preview: 'Consultation', lastModified: '2024-12-30 09:25' },
+            { id: 'service_1_description', title: 'Service 1 - Description', group: 'service_1', preview: 'Nous vous accompagnons...', lastModified: '2024-12-30 09:30' },
+            { id: 'service_2_titre', title: 'Service 2 - Titre', group: 'service_2', preview: 'Réalisation', lastModified: '2024-12-30 09:40' },
+            { id: 'service_2_description', title: 'Service 2 - Description', group: 'service_2', preview: 'Notre équipe réalise...', lastModified: '2024-12-30 09:45' }
+        ],
+        carrousel: [
+            { id: 'titre_carrousel', title: 'Titre Carrousel', group: 'carrousel_group', preview: 'Nos réalisations', lastModified: '2024-12-29 13:30' },
+            { id: 'carrousel_1_titre', title: 'Carrousel 1 - Titre', group: 'image_carrousel_1_group', preview: 'Projet résidentiel', lastModified: '2024-12-28 14:20' },
+            { id: 'carrousel_1_description', title: 'Carrousel 1 - Description', group: 'image_carrousel_1_group', preview: 'Rénovation complète...', lastModified: '2024-12-28 14:25' },
+            { id: 'carrousel_2_titre', title: 'Carrousel 2 - Titre', group: 'image_carrousel_2_group', preview: 'Projet commercial', lastModified: '2024-12-28 14:30' },
+            { id: 'carrousel_3_titre', title: 'Carrousel 3 - Titre', group: 'image_carrousel_3_group', preview: 'Projet industriel', lastModified: '2024-12-28 14:40' }
+        ],
+        contact: [
+            { id: 'contact_title', title: 'Titre Contact', group: 'contact_group', preview: 'Contactez-nous', lastModified: '2024-12-27 16:30' },
+            { id: 'contact_paragraph', title: 'Texte Contact', group: 'contact_group', preview: 'N\'hésitez pas à nous contacter...', lastModified: '2024-12-27 16:35' }
+        ],
+        historique: []
+    };
+
+    // Créer la liste complète pour la recherche
+    allFields = [];
+    Object.keys(acfData).forEach(section => {
+        if (section !== 'historique') {
+            acfData[section].forEach(field => {
+                allFields.push({ ...field, section });
+            });
         }
-        
-        const data = await response.json();
-        fieldsData = data.fields || [];
-        filteredFields = [...fieldsData];
-        
-        renderFields();
-        updateStats();
-        
-    } catch (error) {
-        console.error('Erreur lors du chargement:', error);
-        showErrorMessage('Impossible de charger les champs ACF');
-    } finally {
-        hideLoadingState();
+    });
+
+    // Générer l'historique
+    generateHistory();
+}
+
+/**
+ * Changer de section
+ */
+function switchSection(section) {
+    // Mettre à jour la navigation
+    document.querySelectorAll('.section-link').forEach(link => {
+        link.classList.remove('active');
+    });
+    document.querySelector(`[data-section="${section}"]`).classList.add('active');
+
+    currentSection = section;
+
+    // Mettre à jour le titre
+    const titles = {
+        identite: { title: 'Identité Visuelle', desc: 'Gérez les éléments d\'identité visuelle de votre site' },
+        header: { title: 'Header', desc: 'Modifiez les éléments du header de votre site' },
+        presentation: { title: 'Présentation', desc: 'Gérez la section présentation de votre entreprise' },
+        partenaires: { title: 'Partenaires', desc: 'Administrez vos partenaires et leurs informations' },
+        services: { title: 'Services', desc: 'Modifiez la présentation de vos services' },
+        carrousel: { title: 'Carrousel', desc: 'Gérez les images et contenus du carrousel' },
+        contact: { title: 'Contact', desc: 'Modifiez les informations de contact' },
+        historique: { title: 'Historique', desc: 'Consultez l\'historique des modifications' }
+    };
+
+    document.getElementById('sectionTitle').textContent = titles[section].title;
+    document.getElementById('sectionDescription').textContent = titles[section].desc;
+
+    // Rendre le contenu
+    if (section === 'historique') {
+        renderHistory();
+    } else {
+        renderSection(section);
     }
 }
 
 /**
- * Rendu des champs dans la grille
+ * Rendu d'une section
  */
-function renderFields() {
-    const fieldsGrid = document.getElementById('fieldsGrid');
-    if (!fieldsGrid) return;
-    
-    if (filteredFields.length === 0) {
-        fieldsGrid.innerHTML = `
-            <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: var(--text-muted);">
-                <p>Aucun champ trouvé</p>
+function renderSection(section) {
+    const container = document.getElementById('contentContainer');
+    const fields = acfData[section] || [];
+
+    if (fields.length === 0) {
+        container.innerHTML = `
+            <div class="text-center py-5">
+                <i class="bi bi-inbox display-1 text-muted"></i>
+                <h4 class="text-muted mt-3">Aucun champ dans cette section</h4>
             </div>
         `;
         return;
     }
-    
-    fieldsGrid.innerHTML = filteredFields.map(field => `
-        <div class="field-card" data-field-type="${field.type}">
-            <div class="field-header">
-                <div class="field-icon ${field.type}-field">${getFieldIcon(field.type)}</div>
-                <div class="field-info">
-                    <h3 class="field-title">${field.title}</h3>
-                    <p class="field-description">${field.description}</p>
+
+    container.innerHTML = `
+        <div class="row g-3">
+            ${fields.map(field => `
+                <div class="col-md-6 col-lg-4">
+                    <div class="field-card">
+                        <div class="field-group">${field.group}</div>
+                        <h5 class="field-title">${field.title}</h5>
+                        <div class="field-last-modified">
+                            <i class="bi bi-clock me-1"></i>
+                            Modifié le ${formatDate(field.lastModified)}
+                        </div>
+                        <div class="field-preview">${field.preview}</div>
+                        <button class="btn btn-edit w-100" data-field-id="${field.id}">
+                            <i class="bi bi-pencil me-1"></i>
+                            Modifier
+                        </button>
+                    </div>
                 </div>
-                <div class="field-status ${field.status}">${field.status === 'active' ? 'Actif' : 'Inactif'}</div>
-            </div>
-            <div class="field-preview ${field.type === 'image' ? 'image-preview' : ''}">
-                ${renderFieldPreview(field)}
-            </div>
-            <div class="field-actions">
-                <button class="edit-btn ${field.status === 'inactive' ? 'disabled' : ''}" 
-                        data-field-id="${field.id}" 
-                        ${field.status === 'inactive' ? 'disabled' : ''}>
-                    <span class="edit-icon">✏️</span>
-                    Modifier
-                </button>
-                <button class="preview-btn" data-field-id="${field.id}">
-                    <span class="preview-icon">👁️</span>
-                    Prévisualiser
-                </button>
-            </div>
+            `).join('')}
         </div>
-    `).join('');
+    `;
+
+    // Ajouter les événements
+    container.querySelectorAll('.btn-edit').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const fieldId = e.target.closest('.btn-edit').dataset.fieldId;
+            handleEdit(fieldId);
+        });
+    });
 }
 
 /**
- * Rendu de la prévisualisation d'un champ
+ * Rendu de l'historique
  */
-function renderFieldPreview(field) {
-    if (field.type === 'image') {
-        return `<img src="${field.preview || 'https://via.placeholder.com/300x150/42a5f5/ffffff?text=Image+Actuelle'}" 
-                     alt="Aperçu image" class="preview-image">`;
-    }
-    
-    return `
-        <span class="preview-label">Contenu actuel :</span>
-        <span class="preview-text">"${field.preview || 'Aucun contenu'}"</span>
+function renderHistory() {
+    const container = document.getElementById('contentContainer');
+    const history = acfData.historique;
+
+    container.innerHTML = `
+        <div class="history-list">
+            ${history.map(item => `
+                <div class="history-item">
+                    <div class="history-icon">
+                        <i class="bi ${getHistoryIcon(item.action)}"></i>
+                    </div>
+                    <div class="history-content">
+                        <div class="history-action">${item.action} : ${item.field}</div>
+                        <div class="history-time">${formatDate(item.timestamp)} par ${item.user}</div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
     `;
 }
 
 /**
- * Obtenir l'icône pour un type de champ
+ * Recherche globale
  */
-function getFieldIcon(type) {
-    const icons = {
-        'text': '📝',
-        'textarea': '📄',
-        'image': '🖼️',
-        'wysiwyg': '📋',
-        'number': '🔢',
-        'email': '📧',
-        'url': '🔗',
-        'date': '📅'
-    };
-    
-    return icons[type] || '📝';
-}
-
-/**
- * Mise à jour des statistiques
- */
-function updateStats() {
-    const totalFields = fieldsData.length;
-    const activeFields = fieldsData.filter(field => field.status === 'active').length;
-    const todayModifications = fieldsData.filter(field => {
-        const today = new Date().toDateString();
-        return new Date(field.lastModified).toDateString() === today;
-    }).length;
-    
-    // Mettre à jour les éléments du DOM
-    const statNumbers = document.querySelectorAll('.stat-number');
-    if (statNumbers[0]) statNumbers[0].textContent = totalFields;
-    if (statNumbers[1]) statNumbers[1].textContent = todayModifications;
-    if (statNumbers[2]) statNumbers[2].textContent = '2.3s'; // Temps de sauvegarde fixe
-}
-
-/**
- * Gestion de la recherche de champs
- */
-function handleFieldSearch(e) {
+function handleGlobalSearch(e) {
     const searchTerm = e.target.value.toLowerCase().trim();
     
     if (searchTerm === '') {
-        filteredFields = [...fieldsData];
-    } else {
-        filteredFields = fieldsData.filter(field => 
-            field.title.toLowerCase().includes(searchTerm) ||
-            field.description.toLowerCase().includes(searchTerm) ||
-            field.type.toLowerCase().includes(searchTerm)
-        );
-    }
-    
-    renderFields();
-}
-
-/**
- * Gestion de l'actualisation des champs
- */
-async function handleRefreshFields() {
-    const refreshBtn = document.getElementById('refreshFields');
-    const originalText = refreshBtn.innerHTML;
-    
-    // Animation du bouton
-    refreshBtn.innerHTML = '<span class="refresh-icon">🔄</span> Actualisation...';
-    refreshBtn.disabled = true;
-    
-    try {
-        await loadFields();
-        showSuccessMessage('Champs actualisés avec succès');
-    } catch (error) {
-        showErrorMessage('Erreur lors de l\'actualisation');
-    } finally {
-        setTimeout(() => {
-            refreshBtn.innerHTML = originalText;
-            refreshBtn.disabled = false;
-        }, 1000);
-    }
-}
-
-/**
- * Gestion de l'édition d'un champ
- */
-function handleEditField(fieldId) {
-    const field = fieldsData.find(f => f.id === fieldId);
-    if (!field) return;
-    
-    // Redirection vers la page d'édition (à créer)
-    window.location.href = `edit.html?field=${fieldId}`;
-}
-
-/**
- * Gestion de la prévisualisation d'un champ
- */
-function handlePreviewField(fieldId) {
-    const field = fieldsData.find(f => f.id === fieldId);
-    if (!field) return;
-    
-    // Ouvrir la prévisualisation dans une nouvelle fenêtre
-    window.open(`preview.html?field=${fieldId}`, '_blank', 'width=800,height=600');
-}
-
-/**
- * Gestion de la déconnexion
- */
-async function handleLogout() {
-    if (!confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
+        switchSection(currentSection);
         return;
     }
+
+    // Rechercher dans tous les champs
+    const results = allFields.filter(field => 
+        field.title.toLowerCase().includes(searchTerm) ||
+        field.group.toLowerCase().includes(searchTerm) ||
+        field.preview.toLowerCase().includes(searchTerm)
+    );
+
+    renderSearchResults(results, searchTerm);
+}
+
+/**
+ * Rendu des résultats de recherche
+ */
+function renderSearchResults(results, searchTerm) {
+    const container = document.getElementById('contentContainer');
     
-    try {
-        const token = localStorage.getItem('authToken');
-        
-        // Appel à l'API de déconnexion (optionnel)
-        await fetch(`${API_CONFIG.baseUrl}${API_CONFIG.endpoints.logout}`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
+    document.getElementById('sectionTitle').textContent = `Résultats de recherche`;
+    document.getElementById('sectionDescription').textContent = `${results.length} résultat(s) pour "${searchTerm}"`;
+
+    if (results.length === 0) {
+        container.innerHTML = `
+            <div class="text-center py-5">
+                <i class="bi bi-search display-1 text-muted"></i>
+                <h4 class="text-muted mt-3">Aucun résultat trouvé</h4>
+                <p class="text-muted">Essayez avec d'autres mots-clés</p>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = `
+        <div class="row g-3">
+            ${results.map(field => `
+                <div class="col-md-6 col-lg-4">
+                    <div class="field-card">
+                        <div class="field-group">${field.section}</div>
+                        <h5 class="field-title">${highlightText(field.title, searchTerm)}</h5>
+                        <div class="field-last-modified">
+                            <i class="bi bi-clock me-1"></i>
+                            Modifié le ${formatDate(field.lastModified)}
+                        </div>
+                        <div class="field-preview">${highlightText(field.preview, searchTerm)}</div>
+                        <button class="btn btn-edit w-100" data-field-id="${field.id}">
+                            <i class="bi bi-pencil me-1"></i>
+                            Modifier
+                        </button>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+
+    // Ajouter les événements
+    container.querySelectorAll('.btn-edit').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const fieldId = e.target.closest('.btn-edit').dataset.fieldId;
+            handleEdit(fieldId);
         });
-        
-    } catch (error) {
-        console.error('Erreur lors de la déconnexion:', error);
-    } finally {
-        // Nettoyer le stockage local
+    });
+}
+
+/**
+ * Générer l'historique
+ */
+function generateHistory() {
+    const actions = ['Modification', 'Création', 'Suppression'];
+    const users = ['John Doe', 'Jane Smith', 'Admin'];
+    
+    acfData.historique = allFields
+        .sort((a, b) => new Date(b.lastModified) - new Date(a.lastModified))
+        .slice(0, 10)
+        .map(field => ({
+            action: actions[Math.floor(Math.random() * actions.length)],
+            field: field.title,
+            timestamp: field.lastModified,
+            user: users[Math.floor(Math.random() * users.length)]
+        }));
+}
+
+/**
+ * Utilitaires
+ */
+function formatDate(dateString) {
+    return new Date(dateString).toLocaleDateString('fr-FR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+function highlightText(text, searchTerm) {
+    const regex = new RegExp(`(${searchTerm})`, 'gi');
+    return text.replace(regex, '<span class="search-highlight">$1</span>');
+}
+
+function getHistoryIcon(action) {
+    const icons = {
+        'Modification': 'bi-pencil',
+        'Création': 'bi-plus-circle',
+        'Suppression': 'bi-trash'
+    };
+    return icons[action] || 'bi-clock';
+}
+
+function handleEdit(fieldId) {
+    alert(`Modification du champ : ${fieldId}`);
+}
+
+function handleRefreshSection() {
+    switchSection(currentSection);
+    showToast('Section actualisée', 'success');
+}
+
+function handleLogout() {
+    if (confirm('Déconnexion ?')) {
         localStorage.removeItem('authToken');
         localStorage.removeItem('user');
-        
-        // Redirection vers la page de connexion
         window.location.href = 'index.html';
     }
 }
 
-/**
- * Affichage d'un état de chargement
- */
-function showLoadingState() {
-    const fieldsGrid = document.getElementById('fieldsGrid');
-    if (fieldsGrid) {
-        fieldsGrid.innerHTML = `
-            <div style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
-                <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid var(--border-light); border-top: 4px solid var(--secondary); border-radius: 50%; animation: spin 1s linear infinite;"></div>
-                <p style="margin-top: 1rem; color: var(--text-muted);">Chargement des champs...</p>
+function showToast(message, type) {
+    // Toast Bootstrap simple
+    const toastHtml = `
+        <div class="toast align-items-center text-bg-${type} border-0" role="alert">
+            <div class="d-flex">
+                <div class="toast-body">${message}</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
             </div>
-        `;
-    }
-}
-
-/**
- * Masquer l'état de chargement
- */
-function hideLoadingState() {
-    // Le rendu des champs remplacera automatiquement l'état de chargement
-}
-
-/**
- * Affichage d'un message de succès
- */
-function showSuccessMessage(message) {
-    showNotification(message, 'success');
-}
-
-/**
- * Affichage d'un message d'erreur
- */
-function showErrorMessage(message) {
-    showNotification(message, 'error');
-}
-
-/**
- * Système de notifications
- */
-function showNotification(message, type = 'info') {
-    const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 1rem 1.5rem;
-        border-radius: 0.5rem;
-        color: white;
-        font-weight: 500;
-        z-index: 1000;
-        transform: translateX(100%);
-        transition: transform 0.3s ease;
-        max-width: 400px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        </div>
     `;
     
-    // Couleurs selon le type
-    const colors = {
-        success: 'var(--action)',
-        error: '#e74c3c',
-        info: 'var(--secondary)'
-    };
-    
-    notification.style.background = colors[type] || colors.info;
-    notification.textContent = message;
-    
-    document.body.appendChild(notification);
-    
-    // Animation d'entrée
-    setTimeout(() => {
-        notification.style.transform = 'translateX(0)';
-    }, 100);
-    
-    // Suppression automatique
-    setTimeout(() => {
-        notification.style.transform = 'translateX(100%)';
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.parentNode.removeChild(notification);
-            }
-        }, 300);
-    }, 3000);
-}
-
-/**
- * Initialisation des animations
- */
-function initializeAnimations() {
-    // Animation CSS pour le spinner de chargement
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .notification {
-            animation: slideIn 0.3s ease;
-        }
-        
-        @keyframes slideIn {
-            from { transform: translateX(100%); }
-            to { transform: translateX(0); }
-        }
-    `;
-    document.head.appendChild(style);
-}
-
-// Données de test (à remplacer par l'API)
-const mockFieldsData = [
-    {
-        id: 'title_principal',
-        title: 'Titre Principal',
-        description: 'Titre affiché en en-tête de page',
-        type: 'text',
-        status: 'active',
-        preview: 'Bienvenue chez Speed Modif ACF',
-        lastModified: new Date().toISOString()
-    },
-    {
-        id: 'description_entreprise',
-        title: 'Description Entreprise',
-        description: 'Texte de présentation de l\'entreprise',
-        type: 'textarea',
-        status: 'active',
-        preview: 'Notre entreprise accompagne les clients...',
-        lastModified: new Date(Date.now() - 3600000).toISOString()
-    },
-    {
-        id: 'image_mise_en_avant',
-        title: 'Image Mise en Avant',
-        description: 'Image principale de la page d\'accueil',
-        type: 'image',
-        status: 'active',
-        preview: 'https://via.placeholder.com/300x150/42a5f5/ffffff?text=Image+Actuelle',
-        lastModified: new Date(Date.now() - 7200000).toISOString()
-    },
-    {
-        id: 'numero_telephone',
-        title: 'Numéro de Téléphone',
-        description: 'Contact téléphonique affiché',
-        type: 'text',
-        status: 'active',
-        preview: '+33 1 23 45 67 89',
-        lastModified: new Date(Date.now() - 86400000).toISOString()
-    },
-    {
-        id: 'adresse_entreprise',
-        title: 'Adresse Entreprise',
-        description: 'Adresse complète de l\'entreprise',
-        type: 'textarea',
-        status: 'inactive',
-        preview: '123 Rue de la Paix, 75001 Paris',
-        lastModified: new Date(Date.now() - 172800000).toISOString()
-    },
-    {
-        id: 'contenu_services',
-        title: 'Contenu Services',
-        description: 'Description détaillée des services',
-        type: 'wysiwyg',
-        status: 'active',
-        preview: 'Nos services incluent le développement...',
-        lastModified: new Date(Date.now() - 259200000).toISOString()
+    let toastContainer = document.querySelector('.toast-container');
+    if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+        document.body.appendChild(toastContainer);
     }
-];
-
-// Utiliser les données de test si l'API n'est pas disponible
-if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    setTimeout(() => {
-        fieldsData = mockFieldsData;
-        filteredFields = [...fieldsData];
-        renderFields();
-        updateStats();
-    }, 1000);
+    
+    toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+    const toastElement = toastContainer.lastElementChild;
+    const toast = new bootstrap.Toast(toastElement);
+    toast.show();
 }
