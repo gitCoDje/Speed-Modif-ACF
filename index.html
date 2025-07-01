@@ -5,7 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Speed Modif ACF</title>
-
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet" />
     <link rel="stylesheet" href="./css/styles.css" type="text/css" />
 
     <meta name="author" content="coDje" />
@@ -14,6 +18,76 @@
       content="Fast. Simple. Secure. Une application qui modifie rapidement les champs ACF existants." />
   </head>
   <body>
-    <h1>Speed Modif ACF</h1>
+    <!-- Header avec logo principal -->
+<header class="header">
+    <a href="#" class="logo-main">
+        <div class="logo-text">
+            <div class="logo-s">S</div>
+            <span class="logo-speed">SPEED</span>
+            <span class="logo-modif">MODIF</span>
+            <span class="logo-acf">ACF</span>
+        </div>
+        <div class="logo-baseline">
+            Fast. Simple. Secure.
+        </div>
+    </a>
+</header>
+
+
+    <!-- Container principal -->
+    <main class="main-container">
+      <div class="login-card">
+        <div class="login-header">
+          <h1 class="login-title">Connexion</h1>
+          <p class="login-subtitle">Accédez à votre espace de modification</p>
+        </div>
+
+        <form class="login-form" id="loginForm">
+          <div class="error-message" id="errorMessage">
+            Identifiants incorrects. Veuillez réessayer.
+          </div>
+
+          <div class="form-group">
+            <label for="email" class="form-label">Adresse email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              class="form-input"
+              placeholder="votre@email.com"
+              required
+              autocomplete="email" />
+          </div>
+
+          <div class="form-group">
+            <label for="password" class="form-label">Mot de passe</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              class="form-input"
+              placeholder="Votre mot de passe"
+              required
+              autocomplete="current-password" />
+          </div>
+
+          <button type="submit" class="login-button">Se connecter</button>
+
+          <div class="login-links">
+            <a href="#" class="forgot-password">Mot de passe oublié ?</a>
+          </div>
+        </form>
+      </div>
+    </main>
+
+    <!-- Footer simple -->
+    <footer class="footer">
+      <div class="footer-content">
+        <span>Speed Modif ACF © 2025</span>
+      </div>
+    </footer>
+
+    <script src="js/auth.js"></script>
   </body>
 </html>
+

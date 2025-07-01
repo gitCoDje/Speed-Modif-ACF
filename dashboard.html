@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="FR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Speed Modif ACF</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet" />    
+    <link rel="stylesheet" href="css/dashboard.css" type="text/css" />
+
+    <meta name="author" content="coDje" />
+    <meta
+      name="description"
+      content="Fast. Simple. Secure. Une application qui modifie rapidement les champs ACF existants." />    
+  </head>
+  <body>
+    <!-- Header Navigation -->
+    <header class="header">
+      <div class="header-container">
+        <div class="logo-section">
+          <div class="logo-text">
+            <div class="logo-s">S</div>
+            <span class="logo-speed">SPEED</span>
+            <span class="logo-modif">MODIF</span>
+            <span class="logo-acf">ACF</span>
+          </div>
+        </div>
+
+        <nav class="nav-menu">
+          <a href="#" class="nav-link active">
+            <span class="nav-icon">🏠</span>
+            Dashboard
+          </a>
+          <a href="#" class="nav-link">
+            <span class="nav-icon">📝</span>
+            Champs ACF
+          </a>
+          <a href="#" class="nav-link">
+            <span class="nav-icon">📊</span>
+            Historique
+          </a>
+        </nav>
+
+        <div class="user-section">
+          <div class="user-info">
+            <span class="user-name">John Doe</span>
+            <span class="user-role">Éditeur</span>
+          </div>
+          <button class="logout-btn" id="logoutBtn">
+            <span class="logout-icon">🚪</span>
+            Déconnexion
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="dashboard-container">
+        <!-- Welcome Section -->
+        <section class="welcome-section">
+          <div class="welcome-content">
+            <h1 class="welcome-title">Bienvenue sur Speed Modif ACF</h1>
+            <p class="welcome-subtitle">
+              Modifiez facilement vos contenus WordPress
+            </p>
+          </div>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon">📝</div>
+              <div class="stat-content">
+                <div class="stat-number">12</div>
+                <div class="stat-label">Champs disponibles</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">✅</div>
+              <div class="stat-content">
+                <div class="stat-number">8</div>
+                <div class="stat-label">Modifications aujourd'hui</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">⏱️</div>
+              <div class="stat-content">
+                <div class="stat-number">2.3s</div>
+                <div class="stat-label">Temps de sauvegarde</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ACF Fields Section -->
+        <section class="fields-section">
+          <div class="section-header">
+            <h2 class="section-title">Champs ACF Modifiables</h2>
+            <div class="section-actions">
+              <button class="refresh-btn" id="refreshFields">
+                <span class="refresh-icon">🔄</span>
+                Actualiser
+              </button>
+              <div class="search-box">
+                <input
+                  type="text"
+                  id="searchFields"
+                  placeholder="Rechercher un champ..."
+                  class="search-input" />
+                <span class="search-icon">🔍</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="fields-grid" id="fieldsGrid">
+            <!-- Field Card 1 -->
+            <div class="field-card" data-field-type="text">
+              <div class="field-header">
+                <div class="field-icon text-field">📝</div>
+                <div class="field-info">
+                  <h3 class="field-title">Titre Principal</h3>
+                  <p class="field-description">
+                    Titre affiché en en-tête de page
+                  </p>
+                </div>
+                <div class="field-status active">Actif</div>
+              </div>
+              <div class="field-preview">
+                <span class="preview-label">Contenu actuel :</span>
+                <span class="preview-text"
+                  >"Bienvenue chez Speed Modif ACF"</span
+                >
+              </div>
+              <div class="field-actions">
+                <button class="edit-btn" data-field-id="title_principal">
+                  <span class="edit-icon">✏️</span>
+                  Modifier
+                </button>
+                <button class="preview-btn" data-field-id="title_principal">
+                  <span class="preview-icon">👁️</span>
+                  Prévisualiser
+                </button>
+              </div>
+            </div>
+
+            <!-- Field Card 2 -->
+            <div class="field-card" data-field-type="textarea">
+              <div class="field-header">
+                <div class="field-icon textarea-field">📄</div>
+                <div class="field-info">
+                  <h3 class="field-title">Description Entreprise</h3>
+                  <p class="field-description">
+                    Texte de présentation de l'entreprise
+                  </p>
+                </div>
+                <div class="field-status active">Actif</div>
+              </div>
+              <div class="field-preview">
+                <span class="preview-label">Contenu actuel :</span>
+                <span class="preview-text"
+                  >"Notre entreprise accompagne les clients..."</span
+                >
+              </div>
+              <div class="field-actions">
+                <button class="edit-btn" data-field-id="description_entreprise">
+                  <span class="edit-icon">✏️</span>
+                  Modifier
+                </button>
+                <button
+                  class="preview-btn"
+                  data-field-id="description_entreprise">
+                  <span class="preview-icon">👁️</span>
+                  Prévisualiser
+                </button>
+              </div>
+            </div>
+
+            <!-- Field Card 3 -->
+            <div class="field-card" data-field-type="image">
+              <div class="field-header">
+                <div class="field-icon image-field">🖼️</div>
+                <div class="field-info">
+                  <h3 class="field-title">Image Mise en Avant</h3>
+                  <p class="field-description">
+                    Image principale de la page d'accueil
+                  </p>
+                </div>
+                <div class="field-status active">Actif</div>
+              </div>
+              <div class="field-preview image-preview">
+                <img
+                  src="https://via.placeholder.com/300x150/42a5f5/ffffff?text=Image+Actuelle"
+                  alt="Aperçu image"
+                  class="preview-image" />
+              </div>
+              <div class="field-actions">
+                <button class="edit-btn" data-field-id="image_mise_en_avant">
+                  <span class="edit-icon">✏️</span>
+                  Modifier
+                </button>
+                <button class="preview-btn" data-field-id="image_mise_en_avant">
+                  <span class="preview-icon">👁️</span>
+                  Prévisualiser
+                </button>
+              </div>
+            </div>
+
+            <!-- Field Card 4 -->
+            <div class="field-card" data-field-type="text">
+              <div class="field-header">
+                <div class="field-icon text-field">📞</div>
+                <div class="field-info">
+                  <h3 class="field-title">Numéro de Téléphone</h3>
+                  <p class="field-description">Contact téléphonique affiché</p>
+                </div>
+                <div class="field-status active">Actif</div>
+              </div>
+              <div class="field-preview">
+                <span class="preview-label">Contenu actuel :</span>
+                <span class="preview-text">"+33 1 23 45 67 89"</span>
+              </div>
+              <div class="field-actions">
+                <button class="edit-btn" data-field-id="numero_telephone">
+                  <span class="edit-icon">✏️</span>
+                  Modifier
+                </button>
+                <button class="preview-btn" data-field-id="numero_telephone">
+                  <span class="preview-icon">👁️</span>
+                  Prévisualiser
+                </button>
+              </div>
+            </div>
+
+            <!-- Field Card 5 -->
+            <div class="field-card" data-field-type="textarea">
+              <div class="field-header">
+                <div class="field-icon textarea-field">📍</div>
+                <div class="field-info">
+                  <h3 class="field-title">Adresse Entreprise</h3>
+                  <p class="field-description">
+                    Adresse complète de l'entreprise
+                  </p>
+                </div>
+                <div class="field-status inactive">Inactif</div>
+              </div>
+              <div class="field-preview">
+                <span class="preview-label">Contenu actuel :</span>
+                <span class="preview-text"
+                  >"123 Rue de la Paix, 75001 Paris"</span
+                >
+              </div>
+              <div class="field-actions">
+                <button
+                  class="edit-btn disabled"
+                  data-field-id="adresse_entreprise"
+                  disabled>
+                  <span class="edit-icon">✏️</span>
+                  Modifier
+                </button>
+                <button class="preview-btn" data-field-id="adresse_entreprise">
+                  <span class="preview-icon">👁️</span>
+                  Prévisualiser
+                </button>
+              </div>
+            </div>
+
+            <!-- Field Card 6 -->
+            <div class="field-card" data-field-type="wysiwyg">
+              <div class="field-header">
+                <div class="field-icon wysiwyg-field">📋</div>
+                <div class="field-info">
+                  <h3 class="field-title">Contenu Services</h3>
+                  <p class="field-description">
+                    Description détaillée des services
+                  </p>
+                </div>
+                <div class="field-status active">Actif</div>
+              </div>
+              <div class="field-preview">
+                <span class="preview-label">Contenu actuel :</span>
+                <span class="preview-text"
+                  >"Nos services incluent le développement..."</span
+                >
+              </div>
+              <div class="field-actions">
+                <button class="edit-btn" data-field-id="contenu_services">
+                  <span class="edit-icon">✏️</span>
+                  Modifier
+                </button>
+                <button class="preview-btn" data-field-id="contenu_services">
+                  <span class="preview-icon">👁️</span>
+                  Prévisualiser
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Recent Activity -->
+        <section class="activity-section">
+          <h2 class="section-title">Activité Récente</h2>
+          <div class="activity-list">
+            <div class="activity-item">
+              <div class="activity-icon">✏️</div>
+              <div class="activity-content">
+                <div class="activity-text">
+                  <strong>Titre Principal</strong> modifié
+                </div>
+                <div class="activity-time">Il y a 2 heures</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon">🖼️</div>
+              <div class="activity-content">
+                <div class="activity-text">
+                  <strong>Image Mise en Avant</strong> mise à jour
+                </div>
+                <div class="activity-time">Il y a 5 heures</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon">📄</div>
+              <div class="activity-content">
+                <div class="activity-text">
+                  <strong>Description Entreprise</strong> modifiée
+                </div>
+                <div class="activity-time">Hier à 14:30</div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script src="js/dashboad.js"></script>
+  </body>
+</html>
