@@ -30,6 +30,16 @@
     font-weight: 600;
     font-size: 1.5rem;
 }
+.footer-mentions{
+    text-decoration: none;
+    color: inherit;
+    color: var(--text-muted);
+
+    &:hover{
+       filter: brightness(1.5);
+    }
+}
+
 
 // Responsive
 @media (max-width: 768px) {

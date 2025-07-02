@@ -3,3 +3,15 @@
 @import "connexion";
 @import "dashboard";
 
+.footer-mentions{
+    a {
+    text-decoration: none;
+    color: inherit;
+    color: var(--text-muted);
+
+    &:hover{
+       filter: brightness(1.5);
+    }
+}
+}
+

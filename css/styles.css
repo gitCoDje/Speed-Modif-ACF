@@ -166,6 +166,15 @@ img {
   font-size: 1.5rem;
 }
 
+.footer-mentions {
+  text-decoration: none;
+  color: inherit;
+  color: var(--text-muted);
+}
+.footer-mentions:hover {
+  filter: brightness(1.5);
+}
+
 @media (max-width: 768px) {
   .logo-speed, .logo-modif, .logo-acf {
     font-size: 1.25rem;
@@ -400,4 +409,12 @@ img {
   .col-lg-10 {
     width: calc(100% - 15rem);
   }
+}
+.footer-mentions a {
+  text-decoration: none;
+  color: inherit;
+  color: var(--text-muted);
+}
+.footer-mentions a:hover {
+  filter: brightness(1.5);
 }/*# sourceMappingURL=styles.css.map */
