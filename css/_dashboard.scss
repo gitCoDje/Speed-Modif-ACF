@@ -1,3 +1,12 @@
+.nav-dashboard {
+  background: linear-gradient(
+    to right,
+    var(--gradient-start),
+    var(--gradient-middle),
+    var(--gradient-end)
+  ) !important;
+}
+
 // Logo
 .navbar-brand {
   .logo-s {
@@ -16,6 +25,7 @@
     color: white;
     font-weight: 700;
     font-size: 1rem;
+    box-shadow: 2px 2px 4px rgba($color: #000000, $alpha: 0.2);
   }
 
   .logo-speed {
@@ -34,6 +44,7 @@
     color: var(--accent);
     font-weight: 600;
     font-size: 1rem;
+    color: #EDF5FD;
   }
 }
 
@@ -128,7 +139,7 @@
   background: var(--light);
   padding: 1rem;
   border-radius: 0.5rem;
-  border-left: 3px solid var(--accent);
+  border: 1px solid var(--accent);  
   margin: 0.75rem 0;
   font-size: 0.875rem;
   color: var(--text-secondary);

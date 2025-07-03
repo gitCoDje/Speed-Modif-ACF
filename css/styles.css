@@ -134,6 +134,10 @@ img {
   border-color: var(--border-light);
 }
 
+bg-primary {
+  background-color: red !important;
+}
+
 .logo-s {
   width: 2.5rem;
   height: 2.5rem;
@@ -185,6 +189,10 @@ img {
     font-size: 1rem;
   }
 }
+.nav-dashboard {
+  background: linear-gradient(to right, var(--gradient-start), var(--gradient-middle), var(--gradient-end)) !important;
+}
+
 .navbar-brand .logo-s {
   width: 2rem;
   height: 2rem;
@@ -196,6 +204,7 @@ img {
   color: white;
   font-weight: 700;
   font-size: 1rem;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 .navbar-brand .logo-speed {
   color: rgba(255, 255, 255, 0.8);
@@ -211,6 +220,7 @@ img {
   color: var(--accent);
   font-weight: 600;
   font-size: 1rem;
+  color: #EDF5FD;
 }
 
 .sidebar {
@@ -295,7 +305,7 @@ img {
   background: var(--light);
   padding: 1rem;
   border-radius: 0.5rem;
-  border-left: 3px solid var(--accent);
+  border: 1px solid var(--accent);
   margin: 0.75rem 0;
   font-size: 0.875rem;
   color: var(--text-secondary);
@@ -409,12 +419,4 @@ img {
   .col-lg-10 {
     width: calc(100% - 15rem);
   }
-}
-.footer-mentions a {
-  text-decoration: none;
-  color: inherit;
-  color: var(--text-muted);
-}
-.footer-mentions a:hover {
-  filter: brightness(1.5);
 }/*# sourceMappingURL=styles.css.map */
